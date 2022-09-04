@@ -10,6 +10,11 @@ app = Flask(__name__)
 cors = CORS(app)
 
 
+from Controladores.controladorCandidato import ControladorCandidato
+miControladorCandidato = ControladorCandidato()
+
+
+
 def loadFileConfig():
     with open('config.json') as f:
         data = json.load(f)
@@ -21,6 +26,40 @@ def test():
     json = {}
     json["message"] = "Server running ..."
     return jsonify(json)
+
+## Sección Metodos Johan ControladorCandidatos
+
+@app.route("/candidatos",methods=['GET'])
+def getCandidatos():
+    json = miControladorCandidato.index()
+    return jsonify(json)
+
+
+@app.route("/candidatoCreate",methods=['POST'])
+def crearCandidato():
+    data = request.get_json()
+    json = miControladorCandidato.create(data)
+    return jsonify(json)
+
+
+@app.route("/candidato/<string:id>",methods=['GET'])
+def getCandidato(id):
+    json = miControladorCandidato.show(id)
+    return jsonify(json)
+
+@app.route("/candidatoUpdate/<string:id>",methods=['PUT'])
+def modificarCandidato(id):
+    data = request.get_json()
+    json = miControladorCandidato.update(id,data)
+    return jsonify(json)
+
+
+@app.route("/candidatoRemove/<string:id>",methods=['DELETE'])
+def eliminarEstudiante(id):
+    json=miControladorCandidato.delete(id)
+    return jsonify(json)
+
+##
 
 
 if __name__ == '__main__':
