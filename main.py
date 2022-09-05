@@ -14,6 +14,8 @@ from Controladores.controladorCandidato import ControladorCandidato
 miControladorCandidato = ControladorCandidato()
 from Controladores.ControladorPartido import ControladorPartido
 miControladorPartido = ControladorPartido()
+from Controladores.ControladorMesa import ControladorMesa
+miControladorMesa = ControladorMesa()
 
 
 
@@ -89,6 +91,36 @@ def modificarPartido(id):
 @app.route("/partidoRemove/<string:id>",methods=['DELETE'])
 def eliminarPartido(id):
     json=miControladorPartido.delete(id)
+    return jsonify(json)
+
+##
+##Sección métodos Yuli ControladorMesa
+
+@app.route("/Mesas",methods=['GET'])
+def getMesas():
+    json = miControladorMesa.index()
+    return jsonify(json)
+
+@app.route("/mesaCreate",methods=['POST'])
+def crearMesa():
+    data = request.get_json()
+    json = miControladorMesa.create(data)
+    return jsonify(json)
+
+@app.route("/mesa/<string:numero>",methods=['GET'])
+def getMesa(numero):
+    json = miControladorMesa.show(numero)
+    return jsonify(json)
+
+@app.route("/mesaUpdate/<string:numero>",methods=['PUT'])
+def modificarMesa(numero):
+    data = request.get_json()
+    json = miControladorMesa.update(numero,data)
+    return jsonify(json)
+
+@app.route("/mesaRemove/<string:numero>",methods=['DELETE'])
+def eliminarMesa(numero):
+    json=miControladorMesa.delete(numero)
     return jsonify(json)
 
 ##
