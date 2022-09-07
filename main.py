@@ -4,11 +4,15 @@ from flask import request
 from flask_cors import CORS
 import json
 from waitress import serve
-
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 cors = CORS(app)
 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost/flasksql'
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(app)
 
 from Controladores.controladorCandidato import ControladorCandidato
 miControladorCandidato = ControladorCandidato()
@@ -18,6 +22,95 @@ from Controladores.ControladorMesa import ControladorMesa
 miControladorMesa = ControladorMesa()
 
 
+#db.create_all()
+from Modelos import Candidato2
+
+#Método para crear un registro
+@app.route("/candidatoCreate",methods=['POST'])
+def crearCandidato():
+    data = request.get_json()
+    candidato_cedula  = data['cedula']
+    candidato_nombre =  data['nombre']
+    candidato_apellido = data['apellido']
+    candidato_numero_res = data['numero_res']
+    candidato_correo = data['correo']
+    elcandidato = Candidato2.Candidato2(candidato_cedula, candidato_nombre, candidato_apellido, candidato_numero_res, candidato_correo)
+    db.session.add(elcandidato)
+    db.session.commit()
+    return jsonify({"success": True,"response":"Candidato añadido"})
+
+#Métido para obtener todos los registros
+@app.route("/candidatos",methods=['GET'])
+def getCandidatos():
+    get_candidato = []
+    candidatos = Candidato2.Candidato2.query.all()
+    for candidato in candidatos:
+        result = {
+            "cedula": candidato.cedula,
+            "nombre": candidato.nombre,
+            "apellido": candidato.apellido,
+            "numero_res": candidato.numero_res,
+            "correo": candidato.correo
+        }
+        get_candidato.append(result)
+    return jsonify(get_candidato)
+
+#Método para obtener un solo registro
+@app.route("/candidato/<string:cedula>",methods=['GET'])
+def getCandidato(cedula):
+    candidato = Candidato2.Candidato2.query.get(cedula)
+    result = {
+            "cedula": candidato.cedula,
+            "nombre": candidato.nombre,
+            "apellido": candidato.apellido,
+            "numero_res": candidato.numero_res,
+            "correo": candidato.correo
+        }
+    return jsonify(result)
+
+@app.route("/candidatoUpdate/<string:cedula>",methods=['PUT'])
+def modificarCandidato(cedula):
+    candidato = Candidato2.Candidato2.query.get(cedula)
+    data = request.get_json()
+    candidato_nombre = data['nombre']
+    candidato_apellido = data['apellido']
+    candidato_numero_res = data['numero_res']
+    candidato_correo = data['correo']
+    if candidato is None:
+        respuesta = {
+            "success":False,
+            "response": "No se encontró el candidato"
+        }
+    else:
+        candidato.nombre = candidato_nombre
+        candidato.apellido = candidato_apellido
+        candidato.numero_res = candidato_numero_res
+        candidato.correo = candidato_correo
+        db.session.merge(candidato)
+        db.session.commit()
+        respuesta = {
+            "success": True,
+            "response": "Candidato actualizado"
+        }
+    return jsonify(respuesta)
+
+@app.route("/candidatoRemove/<string:cedula>",methods=['DELETE'])
+def eliminarEstudiante(cedula):
+    candidato = Candidato2.Candidato2.query.get(cedula)
+    print(candidato)
+    if candidato is None:
+        respuesta = {
+            "success": False,
+            "response": "No se encontró el candidato"
+        }
+    else:
+        #db.session.delete(candidato)
+        #db.session.commit()
+        respuesta = {
+            "success": True,
+            "response": "Candidato eliminado"
+        }
+    return jsonify(respuesta)
 
 def loadFileConfig():
     with open('config.json') as f:
@@ -33,33 +126,8 @@ def test():
 
 ## Sección Metodos Johan ControladorCandidatos
 
-@app.route("/candidatos",methods=['GET'])
-def getCandidatos():
-    json = miControladorCandidato.index()
-    return jsonify(json)
-
-
-@app.route("/candidatoCreate",methods=['POST'])
-def crearCandidato():
-    data = request.get_json()
-    json = miControladorCandidato.create(data)
-    return jsonify(json)
-
-
-@app.route("/candidato/<string:id>",methods=['GET'])
-def getCandidato(id):
-    json = miControladorCandidato.show(id)
-    return jsonify(json)
-
-@app.route("/candidatoUpdate/<string:id>",methods=['PUT'])
-def modificarCandidato(id):
-    data = request.get_json()
-    json = miControladorCandidato.update(id,data)
-    return jsonify(json)
-
-
-@app.route("/candidatoRemove/<string:id>",methods=['DELETE'])
-def eliminarEstudiante(id):
+@app.route("/candidatoRemove2/<string:id>",methods=['DELETE'])
+def eliminarEstudiante2(id):
     json=miControladorCandidato.delete(id)
     return jsonify(json)
 
