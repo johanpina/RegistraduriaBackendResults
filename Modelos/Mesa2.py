@@ -1,6 +1,5 @@
 from main import db
 
-
 class Mesa2(db.Model):
     __tablename__ = "Mesa"
 

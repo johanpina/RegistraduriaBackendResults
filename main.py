@@ -22,9 +22,11 @@ from Controladores.ControladorMesa import ControladorMesa
 miControladorMesa = ControladorMesa()
 
 
-#db.create_all()
 from Modelos import Candidato2
 from Modelos import Mesa2
+
+with app.app_context():
+    db.create_all()
 
 #Método para crear un registro
 @app.route("/candidatoCreate",methods=['POST'])
@@ -117,6 +119,7 @@ def eliminarEstudiante(cedula):
 ##Sección métodos Yuli ControladorMesa
 @app.route("/mesaCreate",methods=['POST'])
 def crearMesa():
+    print('esta funcionando')
     data = request.get_json()
     Mesa_Numero  = data['numero']
     Mesa_Ubicacion =  data['ubicacion']
@@ -126,7 +129,7 @@ def crearMesa():
     db.session.commit()
     return jsonify({"success": True,"response":"Mesa creada satisfactoriamente "})
 
-@app.route("/Mesas",methods=['GET'])
+@app.route("/mesas",methods=['GET'])
 def getMesas():
     get_mesa = []
     mesas = Mesa2.Mesa2.query.all()
@@ -173,6 +176,22 @@ def modificarMesa(numero):
         }
     return jsonify(respuesta)
 
+@app.route("/mesaRemove/<string:numero>",methods=['DELETE'])
+def eliminarMesa(numero):
+    mesa = Mesa2.Mesa2.query.get(numero)
+    if mesa is None:
+        respuesta = {
+            "success": False,
+            "response": "No se encontró la mesa"
+        }
+    else:
+        #db.session.delete(mesa)
+        #db.session.commit()
+        respuesta = {
+            "success": True,
+            "response": "Mesa eliminada con éxito"
+        }
+    return jsonify(respuesta)
 
 
 #########################################################################################
@@ -226,16 +245,6 @@ def eliminarPartido(id):
     json=miControladorPartido.delete(id)
     return jsonify(json)
 
-##
-##Sección métodos Yuli ControladorMesa
-
-
-@app.route("/mesaRemove/<string:numero>",methods=['DELETE'])
-def eliminarMesa(numero):
-    json=miControladorMesa.delete(numero)
-    return jsonify(json)
-
-##
 
 if __name__ == '__main__':
     dataConfig = loadFileConfig()
