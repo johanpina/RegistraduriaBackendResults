@@ -37,6 +37,7 @@ def crearCandidato():
     candidato_apellido = data['apellido']
     candidato_numero_res = data['numero_res']
     candidato_correo = data['correo']
+    #candidato_partido = data['candidato_partido']
     elcandidato = Candidato2.Candidato2(candidato_cedula, candidato_nombre, candidato_apellido, candidato_numero_res, candidato_correo)
     db.session.add(elcandidato)
     db.session.commit()
@@ -119,7 +120,6 @@ def eliminarEstudiante(cedula):
 ##Sección métodos Yuli ControladorMesa
 @app.route("/mesaCreate",methods=['POST'])
 def crearMesa():
-    print('esta funcionando')
     data = request.get_json()
     Mesa_Numero  = data['numero']
     Mesa_Ubicacion =  data['ubicacion']
@@ -195,7 +195,71 @@ def eliminarMesa(numero):
 
 
 #########################################################################################
+# -> creacion de métodos partido
 
+from Modelos import Partido2
+
+@app.route("/partidoCreate",methods=['POST'])
+def crearPartido():
+    data = request.get_json()
+    partido_id = data['id']
+    partido_nombre = data['nombre']
+    partido_lema = data['lema']
+    elpartido = Partido2.Partido2(partido_id, partido_nombre, partido_lema)
+    db.session.add(elpartido)
+    db.session.commit()
+    return jsonify({"success": True, "response": "Partido creado satisfactoriamente "})
+
+@app.route("/partidos",methods=['GET'])
+def getPartidos():
+    get_partido = []
+    partidos = Partido2.Partido2.query.all()
+    for partido in partidos:
+        result = {
+            "id": partido.id,
+            "nombre": partido.nombre,
+            "lema": partido.lema,
+
+        }
+        get_partido.append(result)
+    return jsonify(get_partido)
+
+@app.route("/partido/<string:id>",methods=['GET'])
+def getPartido(id):
+    partido = Partido2.Partido2.query.get(id)
+    result = {
+        "id": partido.id,
+        "nombre": partido.nombre,
+        "lema": partido.lema,
+    }
+    return jsonify(result)
+
+
+@app.route("/partidoUpdate/<string:id>",methods=['PUT'])
+def modificarPartido(id):
+    partido = Partido2.Partido2.query.get(id)
+    data = request.get_json()
+    partido_nombre = data['nombre']
+    partido_lema = data['lema']
+
+    if partido is None:
+        respuesta = {
+            "success": False,
+            "response": "No se encontró el partido"
+        }
+    else:
+        partido.nombre = partido_nombre
+        partido_lema = partido_lema
+        db.session.merge(partido)
+        db.session.commit()
+        respuesta = {
+            "success": True,
+            "response": "Partido actualizado exitosamente"
+        }
+    return jsonify(respuesta)
+
+
+########################################################################################
 def loadFileConfig():
     with open('config.json') as f:
         data = json.load(f)
@@ -208,37 +272,8 @@ def test():
     json["message"] = "Server running ..."
     return jsonify(json)
 
-## Sección Metodos Johan ControladorCandidatos
 
-@app.route("/candidatoRemove2/<string:id>",methods=['DELETE'])
-def eliminarEstudiante2(id):
-    json=miControladorCandidato.delete(id)
-    return jsonify(json)
-
-##
 ##Sección métodos ruben ControladorPartidos
-
-@app.route("/partidos",methods=['GET'])
-def getPartidos():
-    json = miControladorPartido.index()
-    return jsonify(json)
-
-@app.route("/partidoCreate",methods=['POST'])
-def crearPartido():
-    data = request.get_json()
-    json = miControladorPartido.create(data)
-    return jsonify(json)
-
-@app.route("/partido/<string:id>",methods=['GET'])
-def getPartido(id):
-    json = miControladorPartido.show(id)
-    return jsonify(json)
-
-@app.route("/partidoUpdate/<string:id>",methods=['PUT'])
-def modificarPartido(id):
-    data = request.get_json()
-    json = miControladorPartido.update(id,data)
-    return jsonify(json)
 
 @app.route("/partidoRemove/<string:id>",methods=['DELETE'])
 def eliminarPartido(id):
