@@ -24,6 +24,7 @@ miControladorMesa = ControladorMesa()
 
 #db.create_all()
 from Modelos import Candidato2
+from Modelos import Mesa2
 
 #Método para crear un registro
 @app.route("/candidatoCreate",methods=['POST'])
@@ -111,6 +112,70 @@ def eliminarEstudiante(cedula):
             "response": "Candidato eliminado"
         }
     return jsonify(respuesta)
+#########################################################################################
+#MESA!!!!
+##Sección métodos Yuli ControladorMesa
+@app.route("/mesaCreate",methods=['POST'])
+def crearMesa():
+    data = request.get_json()
+    Mesa_Numero  = data['numero']
+    Mesa_Ubicacion =  data['ubicacion']
+    Mesa_Cantidad = data['cantidad']
+    laMesa = Mesa2.Mesa2(Mesa_Numero, Mesa_Ubicacion, Mesa_Cantidad)
+    db.session.add(laMesa)
+    db.session.commit()
+    return jsonify({"success": True,"response":"Mesa creada satisfactoriamente "})
+
+@app.route("/Mesas",methods=['GET'])
+def getMesas():
+    get_mesa = []
+    mesas = Mesa2.Mesa2.query.all()
+    for mesa in mesas:
+        result = {
+            "numero": mesa.Numero,
+            "ubicacion": mesa.Ubicacion,
+            "cantidad": mesa.Cantidad,
+
+        }
+        get_mesa.append(result)
+    return jsonify(get_mesa)
+
+@app.route("/mesa/<string:numero>",methods=['GET'])
+def getMesa(numero):
+    mesa = Mesa2.Mesa2.query.get(numero)
+    result = {
+        "numero": mesa.Numero,
+        "ubicacion": mesa.Ubicacion,
+        "cantidad": mesa.Cantidad,
+    }
+    return jsonify(result)
+
+@app.route("/mesaUpdate/<string:numero>",methods=['PUT'])
+def modificarMesa(numero):
+    mesa = Mesa2.Mesa2.query.get(numero)
+    data = request.get_json()
+    mesa_ubicacion = data['ubicacion']
+    mesa_cantidad = data['cantidad']
+
+    if mesa is None:
+        respuesta = {
+            "success": False,
+            "response": "No se encontró la mesa"
+        }
+    else:
+        mesa.Ubicacion = mesa_ubicacion
+        mesa.Cantidad = mesa_cantidad
+        db.session.merge(mesa)
+        db.session.commit()
+        respuesta = {
+            "success": True,
+            "response": "Mesa actualizada"
+        }
+    return jsonify(respuesta)
+
+
+
+#########################################################################################
 
 def loadFileConfig():
     with open('config.json') as f:
@@ -164,27 +229,6 @@ def eliminarPartido(id):
 ##
 ##Sección métodos Yuli ControladorMesa
 
-@app.route("/Mesas",methods=['GET'])
-def getMesas():
-    json = miControladorMesa.index()
-    return jsonify(json)
-
-@app.route("/mesaCreate",methods=['POST'])
-def crearMesa():
-    data = request.get_json()
-    json = miControladorMesa.create(data)
-    return jsonify(json)
-
-@app.route("/mesa/<string:numero>",methods=['GET'])
-def getMesa(numero):
-    json = miControladorMesa.show(numero)
-    return jsonify(json)
-
-@app.route("/mesaUpdate/<string:numero>",methods=['PUT'])
-def modificarMesa(numero):
-    data = request.get_json()
-    json = miControladorMesa.update(numero,data)
-    return jsonify(json)
 
 @app.route("/mesaRemove/<string:numero>",methods=['DELETE'])
 def eliminarMesa(numero):
