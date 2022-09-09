@@ -7,6 +7,7 @@ from waitress import serve
 from flask_sqlalchemy import SQLAlchemy
 from Routes.Mesa import mesa
 from Routes.Partido import partido
+from Routes.Candidato import candidato
 from db import db
 
 app = Flask(__name__)
@@ -18,87 +19,12 @@ SQLAlchemy(app)
 
 app.register_blueprint(mesa)
 app.register_blueprint(partido)
-
-from Controladores.controladorCandidato import ControladorCandidato
-miControladorCandidato = ControladorCandidato()
-from Modelos import Candidato2
+app.register_blueprint(candidato)
 
 with app.app_context():
     db.create_all()
 
-#Método para crear un registro
-@app.route("/candidatoCreate",methods=['POST'])
-def crearCandidato():
-    data = request.get_json()
-    candidato_cedula  = data['cedula']
-    candidato_nombre =  data['nombre']
-    candidato_apellido = data['apellido']
-    candidato_numero_res = data['numero_res']
-    candidato_correo = data['correo']
-    candidato_partido = data['candidato_partido']
-    elcandidato = Candidato2.Candidato2(candidato_cedula, candidato_nombre, candidato_apellido, candidato_numero_res, candidato_correo, candidato_partido)
-    db.session.add(elcandidato)
-    db.session.commit()
-    return jsonify({"success": True,"response":"Candidato añadido"})
-
-#Métido para obtener todos los registros
-@app.route("/candidatos",methods=['GET'])
-def getCandidatos():
-    get_candidato = []
-    candidatos = Candidato2.Candidato2.query.all()
-    for candidato in candidatos:
-        result = {
-            "cedula": candidato.cedula,
-            "nombre": candidato.nombre,
-            "apellido": candidato.apellido,
-            "numero_res": candidato.numero_res,
-            "correo": candidato.correo,
-            "id_partido": candidato.partido_id
-        }
-        get_candidato.append(result)
-    return jsonify(get_candidato)
-
 #Método para obtener un solo registro
-@app.route("/candidato/<string:cedula>",methods=['GET'])
-def getCandidato(cedula):
-    candidato = Candidato2.Candidato2.query.get(cedula)
-    result = {
-            "cedula": candidato.cedula,
-            "nombre": candidato.nombre,
-            "apellido": candidato.apellido,
-            "numero_res": candidato.numero_res,
-            "correo": candidato.correo,
-            "id_partido": candidato.partido_id
-        }
-    return jsonify(result)
-
-@app.route("/candidatoUpdate/<string:cedula>",methods=['PUT'])
-def modificarCandidato(cedula):
-    candidato = Candidato2.Candidato2.query.get(cedula)
-    data = request.get_json()
-    candidato_nombre = data['nombre']
-    candidato_apellido = data['apellido']
-    candidato_numero_res = data['numero_res']
-    candidato_correo = data['correo']
-    candidato_partido = data['id_partido']
-    if candidato is None:
-        respuesta = {
-            "success":False,
-            "response": "No se encontró el candidato"
-        }
-    else:
-        candidato.nombre = candidato_nombre
-        candidato.apellido = candidato_apellido
-        candidato.numero_res = candidato_numero_res
-        candidato.correo = candidato_correo
-        candidato.partido_id = candidato_partido
-        db.session.merge(candidato)
-        db.session.commit()
-        respuesta = {
-            "success": True,
-            "response": "Candidato actualizado"
-        }
-    return jsonify(respuesta)
 
 @app.route("/candidatoRemove/<string:cedula>",methods=['DELETE'])
 def eliminarEstudiante(cedula):
@@ -119,32 +45,6 @@ def eliminarEstudiante(cedula):
     return jsonify(respuesta)
 
 #########################################################################################
-# -> creacion de métodos partido
-
-@app.route("/partidoUpdate/<string:id>",methods=['PUT'])
-def modificarPartido(id):
-    partido = Partido2.Partido2.query.get(id)
-    partido_nombre = data['nombre']
-    partido_lema = data['lema']
-
-    if partido is None:
-        respuesta = {
-            "success": False,
-            "response": "No se encontró el partido"
-        }
-    else:
-        partido.nombre = partido_nombre
-        partido.lema = partido_lema
-        db.session.merge(partido)
-        db.session.commit()
-        respuesta = {
-            "success": True,
-            "response": "Partido actualizado exitosamente"
-        }
-    return jsonify(respuesta)
-
-
-########################################################################################
 
 #Sección de resultados
 from Modelos import Resultado2

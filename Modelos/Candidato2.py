@@ -1,4 +1,4 @@
-from main import db
+from db import db
 
 
 class Candidato2(db.Model):
