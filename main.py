@@ -5,25 +5,28 @@ from flask_cors import CORS
 import json
 from waitress import serve
 from flask_sqlalchemy import SQLAlchemy
+from Routes.Mesa import mesa
+from db import db
 
 app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost/flasksql'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+SQLAlchemy(app)
 
-db = SQLAlchemy(app)
+app.register_blueprint(mesa)
 
 from Controladores.controladorCandidato import ControladorCandidato
 miControladorCandidato = ControladorCandidato()
 from Controladores.ControladorPartido import ControladorPartido
 miControladorPartido = ControladorPartido()
-from Controladores.ControladorMesa import ControladorMesa
-miControladorMesa = ControladorMesa()
+#from Controladores.ControladorMesa import ControladorMesa
+#miControladorMesa = ControladorMesa()
 
 
 from Modelos import Candidato2
-from Modelos import Mesa2
+#from Modelos import Mesa2
 
 with app.app_context():
     db.create_all()
@@ -119,84 +122,6 @@ def eliminarEstudiante(cedula):
             "response": "Candidato eliminado"
         }
     return jsonify(respuesta)
-#########################################################################################
-#MESA!!!!
-##Sección métodos Yuli ControladorMesa
-@app.route("/mesaCreate",methods=['POST'])
-def crearMesa():
-    data = request.get_json()
-    Mesa_Numero  = data['numero']
-    Mesa_Ubicacion =  data['ubicacion']
-    Mesa_Cantidad = data['cantidad']
-    laMesa = Mesa2.Mesa2(Mesa_Numero, Mesa_Ubicacion, Mesa_Cantidad)
-    db.session.add(laMesa)
-    db.session.commit()
-    return jsonify({"success": True,"response":"Mesa creada satisfactoriamente "})
-
-@app.route("/mesas",methods=['GET'])
-def getMesas():
-    get_mesa = []
-    mesas = Mesa2.Mesa2.query.all()
-    for mesa in mesas:
-        result = {
-            "numero": mesa.Numero,
-            "ubicacion": mesa.Ubicacion,
-            "cantidad": mesa.Cantidad,
-
-        }
-        get_mesa.append(result)
-    return jsonify(get_mesa)
-
-@app.route("/mesa/<string:numero>",methods=['GET'])
-def getMesa(numero):
-    mesa = Mesa2.Mesa2.query.get(numero)
-    result = {
-        "numero": mesa.Numero,
-        "ubicacion": mesa.Ubicacion,
-        "cantidad": mesa.Cantidad,
-    }
-    return jsonify(result)
-
-@app.route("/mesaUpdate/<string:numero>",methods=['PUT'])
-def modificarMesa(numero):
-    mesa = Mesa2.Mesa2.query.get(numero)
-    data = request.get_json()
-    mesa_ubicacion = data['ubicacion']
-    mesa_cantidad = data['cantidad']
-
-    if mesa is None:
-        respuesta = {
-            "success": False,
-            "response": "No se encontró la mesa"
-        }
-    else:
-        mesa.Ubicacion = mesa_ubicacion
-        mesa.Cantidad = mesa_cantidad
-        db.session.merge(mesa)
-        db.session.commit()
-        respuesta = {
-            "success": True,
-            "response": "Mesa actualizada"
-        }
-    return jsonify(respuesta)
-
-@app.route("/mesaRemove/<string:numero>",methods=['DELETE'])
-def eliminarMesa(numero):
-    mesa = Mesa2.Mesa2.query.get(numero)
-    if mesa is None:
-        respuesta = {
-            "success": False,
-            "response": "No se encontró la mesa"
-        }
-    else:
-        #db.session.delete(mesa)
-        #db.session.commit()
-        respuesta = {
-            "success": True,
-            "response": "Mesa eliminada con éxito"
-        }
-    return jsonify(respuesta)
-
 
 #########################################################################################
 # -> creacion de métodos partido

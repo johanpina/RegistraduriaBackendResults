@@ -1,6 +1,6 @@
-from main import db
+from db import db
 
-db.create_all()
+#db.create_all()
 class Resultado2(db.Model):
     __tablename__ = "Resultados"
 
