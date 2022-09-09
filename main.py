@@ -37,8 +37,8 @@ def crearCandidato():
     candidato_apellido = data['apellido']
     candidato_numero_res = data['numero_res']
     candidato_correo = data['correo']
-    #candidato_partido = data['candidato_partido']
-    elcandidato = Candidato2.Candidato2(candidato_cedula, candidato_nombre, candidato_apellido, candidato_numero_res, candidato_correo)
+    candidato_partido = data['candidato_partido']
+    elcandidato = Candidato2.Candidato2(candidato_cedula, candidato_nombre, candidato_apellido, candidato_numero_res, candidato_correo, candidato_partido)
     db.session.add(elcandidato)
     db.session.commit()
     return jsonify({"success": True,"response":"Candidato añadido"})
@@ -54,7 +54,8 @@ def getCandidatos():
             "nombre": candidato.nombre,
             "apellido": candidato.apellido,
             "numero_res": candidato.numero_res,
-            "correo": candidato.correo
+            "correo": candidato.correo,
+            "id_partido": candidato.partido_id
         }
         get_candidato.append(result)
     return jsonify(get_candidato)
@@ -68,7 +69,8 @@ def getCandidato(cedula):
             "nombre": candidato.nombre,
             "apellido": candidato.apellido,
             "numero_res": candidato.numero_res,
-            "correo": candidato.correo
+            "correo": candidato.correo,
+            "id_partido": candidato.partido_id
         }
     return jsonify(result)
 
@@ -80,6 +82,7 @@ def modificarCandidato(cedula):
     candidato_apellido = data['apellido']
     candidato_numero_res = data['numero_res']
     candidato_correo = data['correo']
+    candidato_partido = data['id_partido']
     if candidato is None:
         respuesta = {
             "success":False,
@@ -90,6 +93,7 @@ def modificarCandidato(cedula):
         candidato.apellido = candidato_apellido
         candidato.numero_res = candidato_numero_res
         candidato.correo = candidato_correo
+        candidato.partido_id = candidato_partido
         db.session.merge(candidato)
         db.session.commit()
         respuesta = {

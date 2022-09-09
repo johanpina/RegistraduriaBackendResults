@@ -1,6 +1,7 @@
 from main import db
 
-db.create_all()
+
+#db.create_all()
 
 class Partido2(db.Model):
     __tablename__ = "Partido"
@@ -8,7 +9,7 @@ class Partido2(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     nombre = db.Column(db.String())
     lema =  db.Column(db.String())
-    #candidato = db.relationship('Candidato2', backref='partido2', lazy=True)
+    candidato = db.relationship('Candidato2')
 
     def __init__(self, id, nombre, lema):
         self.id = id
