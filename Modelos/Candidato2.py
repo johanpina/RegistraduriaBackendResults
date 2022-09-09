@@ -10,7 +10,7 @@ class Candidato2(db.Model):
     numero_res = db.Column(db.String())
     correo = db.Column(db.String())
     partido_id = db.Column(db.Integer(), db.ForeignKey('Partido.id'))
-    #resultado = db.relationship('Resultado2')
+    resultado = db.relationship('Resultado2')
 
     def __init__(self, cedula, nombre, apellido, numero_res, correo, partido_id):
         self.cedula = cedula
