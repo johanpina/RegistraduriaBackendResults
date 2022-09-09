@@ -6,6 +6,7 @@ import json
 from waitress import serve
 from flask_sqlalchemy import SQLAlchemy
 from Routes.Mesa import mesa
+from Routes.Partido import partido
 from db import db
 
 app = Flask(__name__)
@@ -16,17 +17,11 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 SQLAlchemy(app)
 
 app.register_blueprint(mesa)
+app.register_blueprint(partido)
 
 from Controladores.controladorCandidato import ControladorCandidato
 miControladorCandidato = ControladorCandidato()
-from Controladores.ControladorPartido import ControladorPartido
-miControladorPartido = ControladorPartido()
-#from Controladores.ControladorMesa import ControladorMesa
-#miControladorMesa = ControladorMesa()
-
-
 from Modelos import Candidato2
-#from Modelos import Mesa2
 
 with app.app_context():
     db.create_all()
@@ -126,48 +121,9 @@ def eliminarEstudiante(cedula):
 #########################################################################################
 # -> creacion de métodos partido
 
-from Modelos import Partido2
-
-@app.route("/partidoCreate",methods=['POST'])
-def crearPartido():
-    data = request.get_json()
-    partido_id = data['id']
-    partido_nombre = data['nombre']
-    partido_lema = data['lema']
-    elpartido = Partido2.Partido2(partido_id, partido_nombre, partido_lema)
-    db.session.add(elpartido)
-    db.session.commit()
-    return jsonify({"success": True, "response": "Partido creado satisfactoriamente "})
-
-@app.route("/partidos",methods=['GET'])
-def getPartidos():
-    get_partido = []
-    partidos = Partido2.Partido2.query.all()
-    for partido in partidos:
-        result = {
-            "id": partido.id,
-            "nombre": partido.nombre,
-            "lema": partido.lema,
-
-        }
-        get_partido.append(result)
-    return jsonify(get_partido)
-
-@app.route("/partido/<string:id>",methods=['GET'])
-def getPartido(id):
-    partido = Partido2.Partido2.query.get(id)
-    result = {
-        "id": partido.id,
-        "nombre": partido.nombre,
-        "lema": partido.lema,
-    }
-    return jsonify(result)
-
-
 @app.route("/partidoUpdate/<string:id>",methods=['PUT'])
 def modificarPartido(id):
     partido = Partido2.Partido2.query.get(id)
-    data = request.get_json()
     partido_nombre = data['nombre']
     partido_lema = data['lema']
 

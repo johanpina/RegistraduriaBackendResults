@@ -1,7 +1,4 @@
-from main import db
-
-
-#db.create_all()
+from db import db
 
 class Partido2(db.Model):
     __tablename__ = "Partido"

@@ -1,4 +1,6 @@
-from Modelos.Partido import Partido
+from Modelos.Partido2 import Partido2
+from db import db
+
 
 class ControladorPartido():
 
@@ -7,38 +9,75 @@ class ControladorPartido():
 
     def index(self):
         print('Listar todos los partidos')
-        unPartido = {
-            "nombre": "Pacto historico",
-            "lema": "Queremos paz total"
-        }
-        otroPartido = {
-            "nombre": "Centro democrático",
-            "lema": "Mano firme corazón grande"
-        }
+        get_partido = []
+        partidos = Partido2.query.all()
+        for partido in partidos:
+            result = {
+                "id": partido.id,
+                "nombre": partido.nombre,
+                "lema": partido.lema,
 
-        return  [unPartido, otroPartido]
+            }
+            get_partido.append(result)
+        return get_partido
 
-    def create(self, infoPartido):
-        print('Crear un partido')
-        elPartido = Partido(infoPartido)
-        return {"mensaje": "Partido creado Satisfactoriamente", "partido":elPartido.__dict__}
+    def create(self, data):
+        partido_id = data['id']
+        partido_nombre = data['nombre']
+        partido_lema = data['lema']
+        elpartido = Partido2(partido_id, partido_nombre, partido_lema)
+        db.session.add(elpartido)
+        db.session.commit()
+        respuesta = {
+            "success": True,
+            "response": "Partido creado satisfactoriamente "
+        }
+        return respuesta
 
 
     def show(self, id):
-        print('Mostrando un partido con id: ',id)
-        unPartido = {
-            "id": 1,
-            "nombre": "Pacto historico",
-            "lema": "Queremos paz total"
+        partido = Partido2.query.get(id)
+        result = {
+            "id": partido.id,
+            "nombre": partido.nombre,
+            "lema": partido.lema,
         }
-        return unPartido
+        return result
 
 
-    def update(self, id, infoPartido):
-        print("Actualizando partido con id: ",id)
-        elPartido = Partido(infoPartido)
-        return {"mensaje": "Partido actualizado Satisfactoriamente", "partido": elPartido.__dict__}
+    def update(self, id, data):
+        partido = Partido2.query.get(id)
+        partido_nombre = data['nombre']
+        partido_lema = data['lema']
+
+        if partido is None:
+            respuesta = {
+                "success": False,
+                "response": "No se encontró el partido"
+            }
+        else:
+            partido.nombre = partido_nombre
+            partido.lema = partido_lema
+            db.session.merge(partido)
+            db.session.commit()
+            respuesta = {
+                "success": True,
+                "response": "Partido actualizado exitosamente"
+            }
+        return respuesta
 
     def delete(self, id):
-        print("Eliminando Partido con id ", id)
-        return {"mensaje": "Partido eliminado Correctamente"}
+        partido = Partido2.query.get(id)
+        if partido is None:
+            respuesta = {
+                "success": False,
+                "response": "No se encontró el partido"
+            }
+        else:
+            db.session.delete(partido)
+            db.session.commit()
+            respuesta = {
+                "success": True,
+                "response": "Partido eliminado exitosamente"
+            }
+        return respuesta
