@@ -8,6 +8,7 @@ from Routes.Mesa import mesa
 from Routes.Partido import partido
 from Routes.Candidato import candidato
 from Routes.Resultado import resultado
+from Routes.ResultadoBI import resultadoBi
 from db import db
 
 app = Flask(__name__)
@@ -21,6 +22,7 @@ app.register_blueprint(mesa)
 app.register_blueprint(partido)
 app.register_blueprint(candidato)
 app.register_blueprint(resultado)
+app.register_blueprint(resultadoBi)
 
 def loadFileConfig():
     with open('config.json') as f:
