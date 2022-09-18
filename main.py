@@ -14,7 +14,16 @@ from db import db
 app = Flask(__name__)
 cors = CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost/flasksql'
+#Heroku-postgres credenciales
+username = "avukrhtixjysdw"
+password = "962d5e5809d714ba6d4372fec6c5c3808047e8e993e398056749dec8b1adf1f0"
+hostname = "ec2-34-200-205-45.compute-1.amazonaws.com"
+dbname = "d34ja4pm7vf3cn"
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{username}:{password}@{hostname}/{dbname}"
+
+#Para conexión local
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost/flasksql'
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 SQLAlchemy(app)
 
