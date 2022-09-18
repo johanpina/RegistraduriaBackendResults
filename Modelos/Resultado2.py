@@ -6,7 +6,7 @@ class Resultado2(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     cantidad_votos = db.Column(db.Integer())
     id_candidato = db.Column(db.String(), db.ForeignKey('Candidato.cedula'))
-    id_mesa = db.Column(db.String(), db.ForeignKey('Mesa.Numero'))
+    id_mesa = db.Column(db.Integer(), db.ForeignKey('Mesa.Numero'))
 
     def __init__(self, id, cantidad_votos, id_candidato, id_mesa):
         self.id = id

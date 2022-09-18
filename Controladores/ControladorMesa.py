@@ -21,10 +21,9 @@ class ControladorMesa():
 
     def create(self, data):
         #Creación de una mesa
-        Mesa_Numero = data['numero']
         Mesa_Ubicacion = data['ubicacion']
         Mesa_Cantidad = data['cantidad']
-        laMesa = Mesa2(Mesa_Numero, Mesa_Ubicacion, Mesa_Cantidad)
+        laMesa = Mesa2(Mesa_Ubicacion, Mesa_Cantidad)
         db.session.add(laMesa)
         db.session.commit()
         respuesta = {
