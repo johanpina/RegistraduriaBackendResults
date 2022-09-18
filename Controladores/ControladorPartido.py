@@ -22,10 +22,10 @@ class ControladorPartido():
         return get_partido
 
     def create(self, data):
-        partido_id = data['id']
+        #partido_id = data['id']
         partido_nombre = data['nombre']
         partido_lema = data['lema']
-        elpartido = Partido2(partido_id, partido_nombre, partido_lema)
+        elpartido = Partido2(partido_nombre, partido_lema)
         db.session.add(elpartido)
         db.session.commit()
         respuesta = {

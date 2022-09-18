@@ -8,8 +8,7 @@ class Partido2(db.Model):
     lema =  db.Column(db.String())
     candidato = db.relationship('Candidato2')
 
-    def __init__(self, id, nombre, lema):
-        self.id = id
+    def __init__(self, nombre, lema):
         self.nombre = nombre
         self.lema = lema
 
