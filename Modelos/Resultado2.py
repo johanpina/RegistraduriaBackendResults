@@ -8,8 +8,7 @@ class Resultado2(db.Model):
     id_candidato = db.Column(db.String(), db.ForeignKey('Candidato.cedula'))
     id_mesa = db.Column(db.Integer(), db.ForeignKey('Mesa.Numero'))
 
-    def __init__(self, id, cantidad_votos, id_candidato, id_mesa):
-        self.id = id
+    def __init__(self, cantidad_votos, id_candidato, id_mesa):
         self.cantidad_votos = cantidad_votos
         self.id_candidato = id_candidato
         self.id_mesa = id_mesa

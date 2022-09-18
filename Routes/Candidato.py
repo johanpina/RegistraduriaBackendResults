@@ -10,23 +10,23 @@ def getCandidatos():
     return jsonify(cont.index())
 
 
-@candidato.route("/candidatoCreate",methods=['POST'])
+@candidato.route("/candidatos",methods=['POST'])
 def crearCandidato():
     data = request.get_json()
     return jsonify(cont.create(data))
 
 
-@candidato.route("/candidato/<string:cedula>",methods=['GET'])
+@candidato.route("/candidatos/<string:cedula>",methods=['GET'])
 def getCandidato(cedula):
     return jsonify(cont.show(cedula))
 
 
-@candidato.route("/candidatoUpdate/<string:cedula>",methods=['PUT'])
+@candidato.route("/candidatos/<string:cedula>",methods=['PUT'])
 def modificarCandidato(cedula):
     data = request.get_json()
     return jsonify(cont.update(cedula, data))
 
 
-@candidato.route("/candidatoRemove/<string:cedula>",methods=['DELETE'])
+@candidato.route("/candidatos/<string:cedula>",methods=['DELETE'])
 def eliminarEstudiante(cedula):
     return jsonify(cont.delete(cedula))

@@ -11,23 +11,23 @@ def getResultados():
     return jsonify(cont.index())
 
 
-@resultado.route("/resultadoCreate",methods=['POST'])
+@resultado.route("/resultados",methods=['POST'])
 def crearResultado():
     data = request.get_json()
     return jsonify(cont.create(data))
 
 
-@resultado.route("/resultado/<string:id>",methods=['GET'])
+@resultado.route("/resultados/<string:id>",methods=['GET'])
 def getResultado(id):
     return jsonify(cont.show(id))
 
 
-@resultado.route("/resultadoUpdate/<string:id>",methods=['PUT'])
+@resultado.route("/resultados/<string:id>",methods=['PUT'])
 def modificarResultado(id):
     data = request.get_json()
     return jsonify(cont.update(id,data))
 
 
-@resultado.route("/resultadoDelete/<string:id>", methods = ['DELETE'])
+@resultado.route("/resultados/<string:id>", methods = ['DELETE'])
 def eliminarResultado(id):
     return jsonify(cont.delete(id))

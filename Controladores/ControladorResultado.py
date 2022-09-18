@@ -20,11 +20,10 @@ class ControladorResultado():
         return get_resultado
 
     def create(self, data):
-        resultado_id = data['id']
         resultado_votos = data['cantidad_votos']
         resultado_candidato = data['id_candidato']
         resultado_mesa = data['id_mesa']
-        elresultado = Resultado2(resultado_id, resultado_votos, resultado_candidato, resultado_mesa)
+        elresultado = Resultado2(resultado_votos, resultado_candidato, resultado_mesa)
         db.session.add(elresultado)
         db.session.commit()
         respuesta = {

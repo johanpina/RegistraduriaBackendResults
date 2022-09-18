@@ -9,20 +9,20 @@ mesa = Blueprint('estudiante',__name__)
 def getMesas():
     return jsonify(cont.index())
 
-@mesa.route("/mesaCreate",methods=['POST'])
+@mesa.route("/mesas",methods=['POST'])
 def crearMesa():
     data = request.get_json()
     return jsonify(cont.create(data))
 
-@mesa.route("/mesa/<string:numero>",methods=['GET'])
+@mesa.route("/mesas/<string:numero>",methods=['GET'])
 def getMesa(numero):
     return jsonify(cont.show(numero))
 
-@mesa.route("/mesaUpdate/<string:numero>",methods=['PUT'])
+@mesa.route("/mesas/<string:numero>",methods=['PUT'])
 def modificarMesa(numero):
     data = request.get_json()
     return jsonify(cont.update(numero, data))
 
-@mesa.route("/mesaRemove/<string:numero>",methods=['DELETE'])
+@mesa.route("/mesas/<string:numero>",methods=['DELETE'])
 def eliminarMesa(numero):
     return jsonify(cont.delete(numero))

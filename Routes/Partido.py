@@ -10,24 +10,24 @@ def getPartidos():
     return jsonify(cont.index())
 
 
-@partido.route("/partidoCreate",methods=['POST'])
+@partido.route("/partidos",methods=['POST'])
 def crearPartido():
     data = request.get_json()
     return jsonify(cont.create(data))
 
 
-@partido.route("/partido/<string:id>",methods=['GET'])
+@partido.route("/partidos/<string:id>",methods=['GET'])
 def getPartido(id):
     return jsonify(cont.show(id))
 
 
-@partido.route("/partidoUpdate/<string:id>",methods=['PUT'])
+@partido.route("/partidos/<string:id>",methods=['PUT'])
 def modificarPartido(id):
     data = request.get_json()
     return jsonify(cont.update(id,data))
 
 
-@partido.route("/partidoDelete/<string:id>",methods=['DELETE'])
+@partido.route("/partidos/<string:id>",methods=['DELETE'])
 def eliminarPartido(id):
     return jsonify(cont.delete(id))
 
