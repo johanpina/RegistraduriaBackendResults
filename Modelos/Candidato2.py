@@ -21,4 +21,4 @@ class Candidato2(db.Model):
         self.partido_id = partido_id
 
     def __repr__(self):
-        return f"NumeroResolucion : {self.numero_res},Nombre: {self.nombre}, Apellido : {self.apellido}"
+        return f"NumeroResolucion : {self.numero_res},Nombre: {self.nombre}, Apellido : {self.apellido}, PartidoID: {self.partido_id}"

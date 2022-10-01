@@ -31,3 +31,6 @@ def modificarPartido(id):
 def eliminarPartido(id):
     return jsonify(cont.delete(id))
 
+@partido.route("/validarCandidato", methods=['GET'])
+def validarCandidato():
+    return jsonify(cont.validarCandidato())

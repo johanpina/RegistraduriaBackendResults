@@ -1,4 +1,5 @@
 from Modelos.Partido2 import Partido2
+from Modelos.Candidato2 import Candidato2
 from db import db
 
 
@@ -74,10 +75,24 @@ class ControladorPartido():
                 "response": "No se encontró el partido"
             }
         else:
-            db.session.delete(partido)
-            db.session.commit()
-            respuesta = {
-                "success": True,
-                "response": "Partido eliminado exitosamente"
-            }
+            if self.validarCandidato(id)==True:
+                respuesta = {
+                    "success": False,
+                    "response": "No se puede eliminar el partido, tiene asignado un candidato"
+                }
+            else:
+                db.session.delete(partido)
+                db.session.commit()
+                respuesta = {
+                    "success": True,
+                    "response": "Partido eliminado exitosamente"
+                }
         return respuesta
+
+    def validarCandidato(self, id):
+        candidatos = Candidato2.query.all()
+        for candidato in candidatos:
+            if candidato.partido_id !=None :
+                if id == str(candidato.partido_id):
+                    return True
+        return False
